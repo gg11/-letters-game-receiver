@@ -3,36 +3,112 @@
 <head>
   <title>لعبة الحروف - شاشة العرض</title>
   <style>
-    /* ... (CSS code will be here) ... */
-    /* We will add the styles in the next step inside receiver.js for easier updates */
+    /* --- الإعدادات العامة --- */
+    body {
+      background-color: #2c3e50; /* خلفية داكنة */
+      color: white;
+      font-family: 'Cairo', sans-serif; /* خط عربي جميل */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    /* --- حاوية اللعبة الرئيسية --- */
+    #game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+    /* --- المؤقت --- */
+    #timer {
+      font-size: 4rem;
+      font-weight: bold;
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 10px 30px;
+      border-radius: 15px;
+    }
+    /* --- شبكة الحروف --- */
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr); /* 5 أعمدة */
+      gap: 15px;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 20px;
+    }
+    /* --- خلية الحرف --- */
+    .cell {
+      width: 100px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3.5rem;
+      font-weight: bold;
+      border-radius: 15px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      background-color: #34495e; /* اللون الأساسي (الأبيض) */
+      color: white;
+    }
+    /* --- حالات الخلية --- */
+    .cell.current {
+      background-color: #f1c40f; /* أصفر (الحرف الحالي) */
+      color: #2c3e50;
+      transform: scale(1.1);
+    }
+    .cell.player1 {
+      background-color: #e67e22; /* برتقالي */
+    }
+    .cell.player2 {
+      background-color: #2ecc71; /* أخضر */
+    }
+    /* --- شاشة إعلان الفائز --- */
+    #winner-screen {
+      display: none; /* مخفية بشكل افتراضي */
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    #winner-screen h1 {
+      font-size: 7rem;
+      margin: 0;
+    }
+    #winner-name {
+      font-size: 9rem;
+      font-weight: bold;
+    }
   </style>
+  <!-- لاستخدام خط Cairo من Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="game-container">
-    <header class="game-header">
-      <div class="player-score" id="player1">
-        <span class="player-name">اللاعب 1</span>
-        <span class="score">0</span>
-      </div>
-      <div class="timer-container">
-        <div class="timer-label">مؤقت اللعبة</div>
-        <div class="timer-clock" id="timer">00:00</div>
-        <div class="timer-status" id="timer-status">متوقف</div>
-      </div>
-      <div class="player-score" id="player2">
-        <span class="player-name">اللاعب 2</span>
-        <span class="score">0</span>
-      </div>
-    </header>
-    
-    <main class="letters-grid-container">
-      <div class="letters-grid" id="letters-grid">
-        <!-- الحروف سيتم إضافتها هنا بواسطة JavaScript -->
-      </div>
-    </main>
+
+  <!-- حاوية اللعبة الرئيسية -->
+  <div id="game-container">
+    <div id="timer">00:00</div>
+    <div id="grid">
+      <!-- سيتم ملء خلايا الحروف هنا بواسطة JavaScript -->
+    </div>
   </div>
 
-  <script src="https://www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+  <!-- شاشة إعلان الفائز -->
+  <div id="winner-screen">
+    <h1>الفائز هو</h1>
+    <div id="winner-name"></div>
+  </div>
+
+  <!-- سكربتات Google Cast و اللعبة -->
+  <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
   <script src="receiver.js"></script>
+
 </body>
 </html>

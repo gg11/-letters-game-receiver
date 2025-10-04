@@ -3,30 +3,36 @@
 <head>
   <title>لعبة الحروف - شاشة العرض</title>
   <style>
-    body {
-      background-color: #2c3e50;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: sans-serif;
-      text-align: center;
-    }
-    #game-state {
-      font-size: 2em;
-    }
+    /* ... (CSS code will be here) ... */
+    /* We will add the styles in the next step inside receiver.js for easier updates */
   </style>
 </head>
 <body>
-
-  <div id="game-state">
-    <h1>لعبة الحروف</h1>
-    <p>في انتظار بدء اللعبة من جهازك...</p>
+  <div class="game-container">
+    <header class="game-header">
+      <div class="player-score" id="player1">
+        <span class="player-name">اللاعب 1</span>
+        <span class="score">0</span>
+      </div>
+      <div class="timer-container">
+        <div class="timer-label">مؤقت اللعبة</div>
+        <div class="timer-clock" id="timer">00:00</div>
+        <div class="timer-status" id="timer-status">متوقف</div>
+      </div>
+      <div class="player-score" id="player2">
+        <span class="player-name">اللاعب 2</span>
+        <span class="score">0</span>
+      </div>
+    </header>
+    
+    <main class="letters-grid-container">
+      <div class="letters-grid" id="letters-grid">
+        <!-- الحروف سيتم إضافتها هنا بواسطة JavaScript -->
+      </div>
+    </main>
   </div>
 
-  <script src="//www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
+  <script src="https://www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
   <script src="receiver.js"></script>
-
 </body>
 </html>

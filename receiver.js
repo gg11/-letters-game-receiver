@@ -1,42 +1,83 @@
-// 1. الحصول على سياق المُستقبِل
 const context = cast.framework.CastReceiverContext.getInstance();
+const playerManager = context.getPlayerManager();
 
-// 2. تعريف "اللغة السرية" أو اسم القناة الخاصة بنا
-const CUSTOM_NAMESPACE = 'urn:x-cast:com.lettersgame.control';
-
-// 3. إخبار المُستقبِل أن يستمع للرسائل على هذه القناة
-context.addCustomMessageListener(CUSTOM_NAMESPACE, (customEvent) => {
-  // هذه الدالة ستعمل كلما وصلت رسالة من الجوال
-  console.log('Message received from sender:', customEvent.data);
-  
-  // نقوم بمعالجة الأمر الذي وصل
-  handleCommand(customEvent.data);
+// --- تعريف قناة الاتصال الخاصة بنا ---
+const CUSTOM_NAMESPACE = 'urn:x-cast:com.lettersgame.referee';
+context.addCustomMessageListener(CUSTOM_NAMESPACE, (event) => {
+  // event.data هو الأمر القادم من جوال الحكم
+  handleCommand(event.data);
 });
 
-// دالة لمعالجة الأوامر القادمة
+// --- العناصر في الصفحة ---
+const grid = document.getElementById('grid');
+const timerDisplay = document.getElementById('timer');
+const winnerScreen = document.getElementById('winner-screen');
+const winnerNameDisplay = document.getElementById('winner-name');
+const gameContainer = document.getElementById('game-container');
+
+// --- دالة معالجة الأوامر ---
 function handleCommand(command) {
-  const gameStateDiv = document.getElementById('game-state');
-  
-  // نفحص نوع الأمر ونقوم بتنفيذه
-  if (command.action === 'SHOW_QUESTION') {
-    // إذا كان الأمر هو عرض سؤال، نعرض السؤال والخيارات
-    let optionsHtml = command.payload.options.map(option => `<p>${option}</p>`).join('');
-    gameStateDiv.innerHTML = `<h2>${command.payload.question}</h2><div>${optionsHtml}</div>`;
+  console.log("Received command:", command);
 
-  } else if (command.action === 'SHOW_MESSAGE') {
-    // إذا كان الأمر هو عرض رسالة، نعرضها
-    gameStateDiv.innerHTML = `<h1>${command.message}</h1>`;
+  switch (command.type) {
+    // أمر لإنشاء شبكة الحروف لأول مرة
+    case 'SETUP_GRID':
+      grid.innerHTML = ''; // نفرغ الشبكة القديمة
+      command.letters.forEach((letter, index) => {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.id = `cell-${index}`;
+        cell.textContent = letter;
+        grid.appendChild(cell);
+      });
+      break;
 
-  } else {
-    // إذا وصل أمر غير معروف، نعرض رسالة خطأ
-    gameStateDiv.innerHTML = `<p>أمر غير معروف: ${JSON.stringify(command)}</p>`;
+    // أمر لتحديث حالة (لون) حرف معين
+    case 'UPDATE_LETTER_STATE':
+      // نزيل الحالة القديمة من كل الخلايا أولاً
+      document.querySelectorAll('.cell').forEach(c => {
+        c.classList.remove('current');
+      });
+      
+      // نطبق الحالة الجديدة
+      const cellToUpdate = document.getElementById(`cell-${command.index}`);
+      if (cellToUpdate) {
+        // نزيل كل حالات الألوان القديمة قبل إضافة اللون الجديد
+        cellToUpdate.classList.remove('player1', 'player2', 'current');
+        if (command.state !== 'default') { // 'default' يعني أبيض
+          cellToUpdate.classList.add(command.state);
+        }
+      }
+      break;
+
+    // أمر لتحديث المؤقت
+    case 'UPDATE_TIMER':
+      timerDisplay.textContent = command.time;
+      break;
+
+    // أمر لإظهار شاشة الفائز
+    case 'SHOW_WINNER':
+      winnerNameDisplay.textContent = command.name;
+      winnerNameDisplay.style.color = command.color;
+      gameContainer.style.display = 'none'; // نخفي اللعبة
+      winnerScreen.style.display = 'flex'; // نظهر شاشة الفوز
+      break;
+
+    // أمر لإعادة بدء اللعبة
+    case 'RESET_GAME':
+      winnerScreen.style.display = 'none'; // نخفي شاشة الفوز
+      gameContainer.style.display = 'flex'; // نظهر اللعبة
+      // نعيد كل الخلايا للونها الافتراضي
+      document.querySelectorAll('.cell').forEach(c => {
+        c.className = 'cell';
+      });
+      break;
   }
 }
 
-// 4. بدء تشغيل المُستقبِل وتمديد وقت الانتظار إلى ساعة كاملة (3600 ثانية)
+// --- بدء تشغيل المُستقبِل ---
 context.start({
-  statusText: "لعبة الحروف جاهزة",
-  maxInactivity: 3600 
+  statusText: "لعبة الحروف جاهزة للبدء",
+  maxInactivity: 3600 // إبقاء الجلسة حية لمدة ساعة بدون أوامر
 });
-
-console.log('Receiver is ready and listening for commands...');
+console.log('Receiver-ul este gata și așteaptă comenzi.');
